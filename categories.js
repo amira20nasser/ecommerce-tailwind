@@ -54,7 +54,6 @@ async function BuildUI() {
           `;
 
             card.onclick = () => {
-                console.log("Category clicked:", cat.name);
                 window.location.href = `/products.html?category=${cat.name}`;
             };
 
