@@ -1,9 +1,8 @@
 import { fetchCategories } from "./api/fetch_categories.js";
+import { fetchQuote } from "./api/fetch_quote.js";
 
 
 async function ShopByCategoryUI() {
-
-
 
     const categoryImages = {
         beauty: "https://images.unsplash.com/photo-1596462502278-27bfdc403348",
@@ -23,7 +22,7 @@ async function ShopByCategoryUI() {
         return map[category] || "Explore Now";
     }
 
-    function renderCategories(container, categories) {
+    function ShowCategories(container, categories) {
         container.innerHTML = categories.map(category => `
         <div class="relative rounded-xl overflow-hidden group cursor-pointer"
              onclick="window.location.href='/products.html?category=${category}'">
@@ -44,9 +43,44 @@ async function ShopByCategoryUI() {
 
     const container = document.getElementById("all-categories");
     const categories = await fetchCategories(4);
-    console.log(container);
+    // console.log(container);
 
-    renderCategories(container, categories);
+    ShowCategories(container, categories);
 }
 
-ShopByCategoryUI();
+
+
+
+const quoteDiv = document.getElementById("quote");
+function showLoading() { return `<p>Loading Quote...</p>` };
+function showError() { return `<p>Sorry....</p>` };
+function showQuote(Quote) {
+
+    quoteDiv.innerHTML =
+        `<div class="text-6xl text-gray-700">“</div>
+        <p class="text-xl md:text-2xl text-gray-800 font-light mt-4">
+            “${Quote.quote}”
+        </p>
+        <div class="mt-6 text-gray-600">
+            — ${Quote.author}
+    </div>`
+}
+
+async function loadQuote() {
+    try {
+        quoteDiv.innerHTML = showLoading()
+        const quote = await fetchQuote();
+        console.log(quote);
+        showQuote(quote);
+    } catch (error) {
+        console.error(error);
+        quoteDiv.innerHTML = showError();
+    }
+}
+
+function run() {
+    loadQuote();
+    ShopByCategoryUI();
+}
+
+run();
