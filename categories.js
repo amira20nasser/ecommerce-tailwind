@@ -1,11 +1,11 @@
+import { fetchCategories } from "./api/fetch_categories.js";
+
 const container = document.getElementById("categories");
 const loading = document.getElementById("loading");
 
-async function fetchCategories() {
+async function BuildUI() {
     try {
-        const res = await fetch("https://dummyjson.com/products/category-list");
-        const categories = await res.json();
-
+        const categories = await fetchCategories();
         const categoriesWithImages = await Promise.all(
             categories.map(async (category) => {
                 try {
@@ -67,4 +67,4 @@ async function fetchCategories() {
     }
 }
 
-fetchCategories();
+BuildUI();

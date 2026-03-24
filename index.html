@@ -98,9 +98,10 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6  cursor-pointer">
+            <div id="all-categories" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6  cursor-pointer">
 
-                <div class="relative rounded-xl overflow-hidden group">
+                <div class="relative rounded-xl overflow-hidden group"
+                    onclick="window.location.href = `/products.html?category=beauty`">
                     <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348"
                         class="w-full h-80 object-cover group-hover:scale-110 transition duration-500" />
                     <div class="absolute inset-0 bg-black/30 flex flex-col justify-end p-4 text-white">
@@ -108,44 +109,6 @@
                         <h3 class="text-lg font-bold">Beauty</h3>
                         <span class="text-sm mt-1">See Products
                             <i class="fa-solid fa-arrow-right"></i></span>
-                    </div>
-                </div>
-
-                <!-- Fragrances -->
-                <div class="relative rounded-xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad"
-                        class="w-full h-80 object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-black/30 flex flex-col justify-end p-4 text-white">
-                        <span class="text-sm opacity-80">Luxury Scents</span>
-                        <h3 class="text-lg font-bold">Fragrances</h3>
-                        <span class="text-sm mt-1">See Products
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="relative rounded-xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7" alt="Furniture"
-                        class="w-full h-80 object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-black/30 flex flex-col justify-end p-4 text-white">
-                        <span class="text-sm opacity-80">Modern Living</span>
-                        <h3 class="text-lg font-bold">Furniture</h3>
-                        <span class="text-sm mt-1">See Products
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
-                </div>
-
-
-                <div class="relative rounded-xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e"
-                        class="w-full h-80 object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-black/30 flex flex-col justify-end p-4 text-white">
-                        <span class="text-sm opacity-80">Daily Needs</span>
-                        <h3 class="text-lg font-bold">Groceries</h3>
-                        <span class="text-sm mt-1">See Products
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </span>
                     </div>
                 </div>
 
@@ -212,6 +175,8 @@
             © 2026 Mira Ecommerce. All rights reserved.
         </div>
     </footer>
+
+    <script type="module" src="./index.js"></script>
 </body>
 
 </html>
