@@ -1,118 +1,131 @@
 import { fetchProducts } from "./api/fetch_products.js";
-import { fetchCategories } from "./api/fetch_categories.js"
+import { fetchCategories } from "./api/fetch_categories.js";
+
 const container = document.getElementById("products-container");
+const categoriesList = document.getElementById("categories-list");
 
+let selectedCategories = new Set();
 
-async function productsUI(category, clear = false) {
-    const loadingDiv = document.createElement("div");
-    loadingDiv.textContent = "Loading Products..."
-    loadingDiv.classList.add("text-gray-500");
-    container.appendChild(loadingDiv);
-    const products = await fetchProducts(category);
-    if (clear)
-        container.innerHTML = "";
+const categoryURL = new URLSearchParams(window.location.search).get("category");
+if (categoryURL) {
+    selectedCategories.add(categoryURL);
+}
 
-    if (products?.length === 0) {
-        container.innerHTML = "<p>No products found</p>";
+function showLoading() {
+    container.innerHTML = `<p class="text-gray-500">Loading Products...</p>`;
+}
+
+function showError() {
+    container.innerHTML = `<p class="text-red-500">Something went wrong</p>`;
+}
+
+function showEmpty() {
+    container.innerHTML = `<p>No products found</p>`;
+}
+
+function showProducts(products) {
+    if (!products || products.length === 0) {
+        showEmpty();
         return;
     }
-    loadingDiv.style.display = "none";
-    products.forEach(product => {
-        container.innerHTML += `
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4">
-                <img src="${product.thumbnail}" 
-                   class="rounded-lg mb-3 w-full h-48 object-contain"/>
 
+    let html = "";
+    products.forEach(product => {
+        html += `
+        <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4">
+        <img src="${product.thumbnail}" 
+        class="rounded-lg mb-3 w-full h-48 object-contain"/>
+        
                 <h3 class="font-semibold text-gray-800">
-                    ${product.title}
+                ${product.title}
                 </h3>
 
                 <p class="text-gray-500 text-sm mb-2">
                     ${product.description.slice(0, 50)}...
-                </p>
+                    </p>
 
-                <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center">
                     <span class="text-[#1c2a3f] font-bold">
-                        $${product.price}
+                    $${product.price}
                     </span>
-
+                    
                     <button class="bg-[#1c2a3f] text-white px-3 py-1 rounded-lg hover:bg-blue-900">
                         Add
-                    </button>
-                </div>
+                        </button>
+                        </div>
             </div>
-        `;
+            `;
     });
+    container.innerHTML = html;
+    // console.log(container.innerHTML);
+
 }
-const categoryURL = new URLSearchParams(window.location.search).get("category");
-productsUI(categoryURL);
 
-let selectedCategories = new Set();
-async function filterProducts() {
-    const filtersDiv = document.getElementById("filters-section");
-    const selectedCategory = new URLSearchParams(window.location.search).get("category");
+async function loadProducts() {
+    try {
+        showLoading();
 
-    // if (selectedCategory) {
-    //     filtersDiv.style.display = "none";
-    //     return;
-    // }
-
-    const categories = await fetchCategories();
-    let categoriesList = document.getElementById("categories-list");
-
-
-    categoriesList.innerHTML = "";
-    categories.forEach(category => {
-        let li = document.createElement("li");
-        const label = document.createElement("label");
-        label.className = "flex items-center gap-2 cursor-pointer";
-
-        const checkBox = document.createElement("input");
-        checkBox.type = "checkbox";
-        checkBox.name = category;
-        if (categoryURL == category) {
-            checkBox.checked = true;
+        let products;
+        if (selectedCategories.size === 0) {
+            products = await fetchProducts();
+        } else {
+            const results = await Promise.all([...selectedCategories].map(category => fetchProducts(category)));
+            // console.log("=========results Before flat===========");
+            // console.log(results);
+            products = results.flat();
+            // console.log("=========results AFTER flat===========");
+            // console.log(products);
         }
-        // checkBox.addEventListener("change", function () {
-        //     if (this.checked) {
-        //         productsUI(this.name, isFirstChecked);
-        //         isFirstChecked = false;
-        //         // window.location.href = `/products.html?category=${this.name}`;
-        //     } else {
-        //         console.log(categoryURL);
-        //         if (categoryURL) {
-        //             productsUI(categoryURL, isFirstChecked);
-        //             this.checked = true;
-        //         } else {
-        //             console.log("SHOW ALL ");
-
-        //             productsUI(null, true);
-        //         }
-        //     }
-        // });
-        checkBox.addEventListener("change", function () {
-            if (this.checked) {
-                selectedCategories.add(this.name);
-            } else {
-                selectedCategories.delete(this.name);
-            }
-            if (selectedCategories.size === 0) {
-                productsUI(null, true);
-            } else {
-                container.innerHTML = "";
-                for (let category of selectedCategories) {
-                    productsUI(category, false);
-                }
-            }
-        });
-        const text = document.createTextNode(category);
-
-        label.appendChild(checkBox);
-        label.appendChild(text);
-        li.appendChild(label);
-
-        categoriesList.appendChild(li);
-    });
+        showProducts(products);
+    } catch (error) {
+        console.error(error);
+        showError();
+    }
 }
 
-filterProducts();
+async function showCategoriesFilter() {
+    try {
+        const categories = await fetchCategories();
+        categoriesList.innerHTML = "";
+        categories.forEach(category => {
+            let li = document.createElement("li");
+
+            const label = document.createElement("label");
+            label.className = "flex items-center gap-2 cursor-pointer";
+
+            const checkBox = document.createElement("input");
+            checkBox.type = "checkbox";
+            checkBox.name = category;
+
+            if (selectedCategories.has(category)) {
+                checkBox.checked = true;
+            }
+
+            checkBox.addEventListener("change", function () {
+                if (this.checked) {
+                    selectedCategories.add(this.name);
+                } else {
+                    selectedCategories.delete(this.name);
+                }
+                loadProducts();
+            });
+            const text = document.createTextNode(category);
+
+            label.appendChild(checkBox);
+            label.appendChild(text);
+            li.appendChild(label);
+
+            categoriesList.appendChild(li);
+        });
+    } catch (error) {
+        console.error(error);
+        categoriesList.appendChild(`<p class="text - red - 500">Something went wrong</p>`);
+    }
+}
+
+async function run() {
+    await showCategoriesFilter();
+    await loadProducts();
+}
+
+run();
