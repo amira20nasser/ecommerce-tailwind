@@ -1,6 +1,29 @@
 import { fetchCategories } from "./api/fetch_categories.js";
 import { fetchQuote } from "./api/fetch_quote.js";
+import { login, refreshUserToken, getCurrentUser } from './api/auth.js'
+import { deleteCookie, getCookie, setCookie } from './cookies/cookie.js';
 
+document.addEventListener("DOMContentLoaded", () => {
+    checkIfUserLoggedIn();
+    loadQuote();
+    ShopByCategoryUI();
+})
+
+const dom = {
+    categoriesContainer: document.getElementById("all-categories"),
+    quoteDiv: document.getElementById("quote"),
+    modal: document.getElementById("modal"),
+    signButton: document.getElementById("sign-in"),
+    usernameInput: document.getElementById("username"),
+    passwordInput: document.getElementById("password"),
+    loginBtn: document.getElementById("login-btn"),
+    loginForm: document.getElementById("login-form"),
+    usernameError: document.getElementById("username-error"),
+    passwordError: document.getElementById("password-error"),
+    profileImage: document.getElementById("profile-image")
+};
+
+let isUserLogged = false;
 
 async function ShopByCategoryUI() {
 
@@ -41,22 +64,16 @@ async function ShopByCategoryUI() {
     `).join("");
     }
 
-    const container = document.getElementById("all-categories");
     const categories = await fetchCategories(4);
-    // console.log(container);
-
-    ShowCategories(container, categories);
+    ShowCategories(dom.categoriesContainer, categories);
 }
 
-
-
-
-const quoteDiv = document.getElementById("quote");
-function showLoading() { return `<p>Loading Quote...</p>` };
+function showLoading() { return `<p>Loading... </p>` };
 function showError() { return `<p>Sorry....</p>` };
+
 function showQuote(Quote) {
 
-    quoteDiv.innerHTML =
+    dom.quoteDiv.innerHTML =
         `<div class="text-6xl text-gray-700">“</div>
         <p class="text-xl md:text-2xl text-gray-800 font-light mt-4">
             “${Quote.quote}”
@@ -68,35 +85,18 @@ function showQuote(Quote) {
 
 async function loadQuote() {
     try {
-        quoteDiv.innerHTML = showLoading()
+        dom.quoteDiv.innerHTML = showLoading()
         const quote = await fetchQuote();
-        console.log(quote);
         showQuote(quote);
     } catch (error) {
         console.error(error);
-        quoteDiv.innerHTML = showError();
+        dom.quoteDiv.innerHTML = showError();
     }
 }
 
-function run() {
-    loadQuote();
-    ShopByCategoryUI();
-}
-
-run();
-
-
-const modal = document.getElementById("modal");
-const signButton = document.getElementById("sign-in");
-
-const usernameInput = document.getElementById("username");
-const passwordInput = document.getElementById("password");
-const loginBtn = document.getElementById("login-btn");
-const form = document.getElementById("login-form");
-
 function openModal() {
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+    dom.modal.classList.remove("hidden");
+    dom.modal.classList.add("flex");
 }
 
 function closeModal() {
@@ -104,63 +104,114 @@ function closeModal() {
     modal.classList.remove("flex");
 }
 
-signButton.addEventListener("click", openModal);
+dom.signButton.addEventListener("click", () => {
+    if (isUserLogged) {
+        logoutUser();
+    }
+    else {
+        openModal();
+    }
+    console.log("After press signButton User ? ", isUserLogged);
+});
 
-modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
+dom.modal.addEventListener("click", (e) => {
+    if (e.target === dom.modal) closeModal();
 });
 
 window.closeModal = closeModal;
 
-
-
-let usernameError = document.getElementById('username-error');
-let passError = document.getElementById('password-error');
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function logoutUser() {
+    dom.signButton.textContent = "Log In";
+    dom.signButton.classList.remove("text-red-300");
+    dom.profileImage.classList.add("hidden");
+    deleteCookie("access-token");
+    deleteCookie("refresh-token");
+    isUserLogged = false;
 }
 
-function isValidUsername(username) {
-    return username.length >= 2;
-}
-
-
-function isValidPassword(password) {
-    return password.length >= 6;
-}
+function isValidUsername(username) { return username.length >= 2; }
+function isValidPassword(password) { return password.length >= 6; }
 
 function validateForm() {
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
-    usernameError.textContent = '';
-    passError.textContent = '';
-    const isCorrectUsername = isValidUsername(username);
-    const isCorrectPassword = isValidPassword(password);
-    const isValidForm = isCorrectUsername && isValidPassword;
-    if (!isCorrectUsername) {
-        usernameError.innerHTML = "Please enter a valid e-mail.";
-    }
-    if (!isCorrectPassword) {
-        passError.innerHTML = "Password must be at least 6 characters long."
-    }
-    loginBtn.disabled = !isValid;
+    const username = dom.usernameInput.value.trim();
+    const password = dom.passwordInput.value.trim();
 
-    if (isValidForm) {
+    dom.usernameError.textContent = isValidUsername(username) ? '' : "Please enter a valid e-mail.";
+    dom.passwordError.textContent = isValidPassword(password) ? '' : "Password must be at least 6 characters long.";
+
+    const formValid = isValidUsername(username) && isValidPassword(password);
+    dom.loginBtn.disabled = !formValid;
+
+    dom.loginBtn.classList.toggle("bg-gray-500", !formValid);
+    dom.loginBtn.classList.toggle("cursor-not-allowed", !formValid);
+    dom.loginBtn.classList.toggle("bg-[#152640]", formValid);
+    dom.loginBtn.classList.toggle("hover:bg-[#28487a]", formValid);
+}
+
+dom.usernameInput.addEventListener("input", validateForm);
+dom.passwordInput.addEventListener("input", validateForm);
+
+function showLoadingButton() {
+    dom.loginBtn.textContent = "Loading...";
+    dom.loginBtn.classList.add("bg-gray-500", "cursor-not-allowed");
+    dom.loginBtn.classList.remove("bg-[#152640]", "hover:bg-[#28487a]");
+}
+
+async function submitLoginData(username, password) {
+    try {
+        showLoadingButton();
+        const user = await login(username, password);
+        isUserLogged = true;
+        dom.signButton.textContent = "Log Out";
+        dom.signButton.classList.add("text-red-300");
+        dom.profileImage.classList.remove("hidden");
+        dom.profileImage.src = user.image;
+
+        setCookie("access-token", user.accessToken, 1 * 24 * 60 * 60 * 1000);
+        setCookie("refresh-token", user.refreshToken, 7 * 24 * 60 * 60 * 1000);
+    } catch (error) {
+        // Show pop up failed to log in 
+        console.error("Login failed:", error);
+        isUserLogged = false;
+    } finally {
+        closeModal();
+        loginBtn.textContent = "Sign In";
         loginBtn.classList.remove("bg-gray-500", "cursor-not-allowed");
         loginBtn.classList.add("bg-[#152640]", "hover:bg-[#28487a]");
-    } else {
-        loginBtn.classList.add("bg-gray-500", "cursor-not-allowed");
-        loginBtn.classList.remove("bg-[#152640]", "hover:bg-[#28487a]");
     }
 }
 
-usernameInput.addEventListener("input", validateForm);
-passwordInput.addEventListener("input", validateForm);
-
-form.addEventListener("submit", (e) => {
+dom.loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    console.log("Username:", usernameInput.value);
-    console.log("Password:", passwordInput.value);
-
-    //API CALL
+    const username = dom.usernameInput.value.trim();
+    const password = dom.passwordInput.value.trim();
+    submitLoginData(username, password)
 });
+
+
+async function checkIfUserLoggedIn() {
+    let accessToken = getCookie("access-token");
+    if (accessToken) {
+        let user = await getCurrentUser(accessToken);
+        if (user) {
+            document.getElementById("sign-in").textContent = "Log Out";
+            document.getElementById("sign-in").classList.add("text-red-300");
+            document.getElementById("profile-image").classList.remove("hidden")
+            document.getElementById("profile-image").src = user.image;
+            isUserLogged = true;
+            console.log("User? " + isUserLogged);
+            return true;
+        } else {
+            let refreshToken = getCookie("refresh-token");
+            if (refreshToken) {
+                let newTokens = refreshUserToken(refreshToken);
+                setCookie("access-token", newTokens.accessToken, 24 * 60 * 60 * 1000);
+                setCookie("refresh-token", newTokens.refreshToken, 7 * 24 * 60 * 60 * 1000);
+            }
+        }
+    }
+    isUserLogged = false;
+    console.log("User? " + isUserLogged);
+    return false;
+}
+
