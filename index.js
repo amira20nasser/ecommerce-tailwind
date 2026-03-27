@@ -48,7 +48,7 @@ async function ShopByCategoryUI() {
     function ShowCategories(container, categories) {
         container.innerHTML = categories.map(category => `
         <div class="relative rounded-xl overflow-hidden group cursor-pointer"
-             onclick="window.location.href='/products.html?category=${category}'">
+             onclick="window.location.href='./products.html?category=${category}'">
 
             <img src="${categoryImages[category] || categoryImages['other']}"
                  class="w-full h-80 object-cover group-hover:scale-110 transition duration-500" />

@@ -54,7 +54,7 @@ async function BuildUI() {
           `;
 
             card.onclick = () => {
-                window.location.href = `/products.html?category=${cat.name}`;
+                window.location.href = `./products.html?category=${cat.name}`;
             };
 
             container.appendChild(card);
