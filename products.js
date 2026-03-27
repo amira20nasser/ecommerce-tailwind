@@ -14,13 +14,25 @@ const categoryURL = new URLSearchParams(window.location.search).get("category");
 if (categoryURL) {
     selectedCategories.add(categoryURL);
 }
+cartBtn.addEventListener("click", function () {
+    if (!cartBtn.disabled) {
+        window.location.href = './checkout.html';
+    }
+})
 function updateCartCount() {
     const cartLength = getCart().length;
     const isEmpty = cartLength === 0;
 
     cartBtn.classList.toggle("bg-[#333]", isEmpty);
+    cartBtn.classList.toggle("disabled", !isEmpty);
+
+    cartBtn.disabled = false;
+
     cartBtn.classList.toggle("cursor-not-allowed", isEmpty);
     cartBtn.classList.toggle("cursor-pointer", !isEmpty);
+    if (isEmpty) {
+        cartBtn.disabled = true;
+    }
 
     cartCount.textContent = cartLength;
 }
@@ -66,7 +78,7 @@ function showProducts(products) {
                     
                     <button 
                     data-id="${product.id}" 
-                    class="cart-btn bg-[#1c2a3f] text-white px-3 py-1 rounded-lg hover:bg-blue-900">
+                    class="add-cart-btn bg-[#1c2a3f] text-white px-3 py-1 rounded-lg hover:bg-blue-900">
                           ${isInCart(product.id) ? "Remove" : "Add"}
                         </button>
                     </div>
@@ -75,7 +87,7 @@ function showProducts(products) {
     });
     container.innerHTML = html;
 
-    document.querySelectorAll(".cart-btn").forEach(button => {
+    document.querySelectorAll(".add-cart-btn").forEach(button => {
         button.addEventListener("click", () => {
             console.log(button.dataset);
 
