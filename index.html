@@ -2,114 +2,142 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <title>Home Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+
+    <title>Mira E-commerce</title>
 </head>
 
 <body class="bg-gray-50">
     <header class="bg-[#0f1b2d] text-white w-full">
         <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <h1 class="text-lg md:text-xl font-semibold">Mira E-commerce</h1>
 
-            <h1 class="text-lg md:text-xl font-semibold">
-                Mira E-commerce
-            </h1>
-
-            <nav class="hidden md:flex items-center gap-6 text-sm text-gray-300">
-                <a href="#" class="hover:text-white transition text-white">Home</a>
-                <a href="./products.html" class="hover:text-white transition">Products</a>
-                <a href="./categories.html" target="_parent" class="hover:text-white transition">Categories</a>
+            <!--  Desktop -->
+            <nav class="hidden md:flex gap-6 text-sm text-gray-300">
+                <a href="#" class="text-white">Home</a>
+                <a href="./products.html" class="hover:text-white">Products</a>
+                <a href="./categories.html" class="hover:text-white">Categories</a>
             </nav>
 
             <div class="flex items-center gap-4">
-                <div class="hidden md:block">
-                    <input type="text" placeholder="Search"
-                        class="bg-[#1c2a3f] text-sm px-4 py-2 rounded-lg outline-none placeholder-gray-400 w-56" />
-                </div>
+                <input type="text" placeholder="Search"
+                    class="hidden md:block bg-[#1c2a3f] px-4 py-2 rounded-lg text-sm outline-none w-56" />
 
-                <div class="flex items-center gap-3 text-gray-300">
-                    <button class="hover:text-white">
-                        <i class="fa-duotone fa-solid fa-bag-shopping"></i>
-                    </button>
-                </div>
-
-                <!-- Profile  if login -->
-                <!-- <img src="https://i.pravatar.cc/40" class="w-8 h-8 rounded-full border border-gray-400" alt="profile" /> -->
-                <!-- sign in  -->
-                <button class="bg-gray-800 text-white text-[15px] px-2 py-2 rounded-xl hover:bg-gray-800">
-                    Sign in
+                <button class="text-gray-300 hover:text-white">
+                    <i class="fa-solid fa-bag-shopping"></i>
                 </button>
 
+                <img src="https://i.pravatar.cc/40" class="hidden w-8 h-8 rounded-full border border-gray-400" />
+
+                <button id="sign-in" class="bg-gray-800 px-3 py-2 rounded-xl text-sm hover:bg-gray-700">
+                    Sign in
+                </button>
             </div>
         </div>
 
-        <!-- mobile -->
-        <div class="md:hidden px-4 pb-4 flex justify-center-safe items-center gap-4 text-sm text-gray-300">
-            <a href="#" class="hover:text-white transition text-white">Home</a>
-            <a href="./products.html" class="hover:text-white transition">Products</a>
-            <a href="./categories.html" target="_parent" class="hover:text-white transition">Categories</a>
+        <!-- Mobile -->
+        <div class="md:hidden px-4 pb-4 flex gap-4 items-center text-sm text-gray-300">
+            <a href="#" class="text-white">Home</a>
+            <a href="./products.html">Products</a>
+            <a href="./categories.html">Categories</a>
 
             <input type="text" placeholder="Search"
-                class="bg-[#1c2a3f] text-sm px-4 py-2 rounded-lg outline-none placeholder-gray-400 w-56" />
-
+                class="bg-[#1c2a3f] px-3 py-1 rounded-lg text-sm outline-none w-full" />
         </div>
     </header>
-    <section class="relative h-[70vh] md:h-[85vh] w-full">
-        <img src="./images/hero1.jpg" alt="Ecommerce" class="absolute inset-0 w-full h-full object-cover" />
-        <div class="absolute inset-0 bg-black/20"></div>
-        <div class="relative z-10 flex flex-col justify-center items-center text-center h-full px-4">
 
-            <h1 class="text-white text-3xl md:text-5xl font-bold mb-4">
+    <!-- Sign in body -->
+    <div id="modal" class="text-white fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+
+        <div class="bg-[#0f1b2d] p-8 rounded-2xl w-full max-w-md relative">
+
+            <button onclick="closeModal()" class="absolute top-3 right-3 text-white text-xl">&times;</button>
+
+            <h2 class="text-3xl text-center font-bold mb-6">Sign In</h2>
+
+            <form id="login-form" class="space-y-5">
+
+                <div>
+                    <label class="text-sm text-gray-300">Email</label>
+                    <input id="email" type="email" placeholder="Enter your email"
+                        class="w-full mt-1 px-4 py-2 rounded-lg bg-white/20 text-white outline-none" />
+                    <div id="email-error" class="text-red-300 text-sm"></div>
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-300">Password</label>
+                    <input id="password" type="password" placeholder="Enter your password"
+                        class="w-full mt-1 px-4 py-2 rounded-lg bg-white/20 text-white outline-none" />
+                    <div id="password-error" class="text-red-300 text-sm"></div>
+                </div>
+
+                <button id="login-btn" disabled
+                    class="w-full mt-6 py-3 rounded-lg bg-gray-500 cursor-not-allowed text-white">
+                    Sign In
+                </button>
+            </form>
+
+            <p class="text-center text-sm mt-6 text-gray-300">
+                Don't have an account?
+                <a href="#" class="text-blue-400 hover:underline">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <section class="relative h-[70vh] md:h-[100vh]">
+        <img src="https://plus.unsplash.com/premium_vector-1727403723253-ad4fbcf1dd4b?w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            class="absolute inset-0 w-full h-full object-cover" />
+
+        <div class="absolute inset-0 bg-black/70"></div>
+
+        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+            <h1 class="text-3xl md:text-5xl text-gray-200 font-bold mb-4">
                 Discover Your Style
             </h1>
 
-            <p class="text-gray-200 text-sm md:text-lg max-w-xl mb-6">
-                Shop the latest trends in fashion, electronics, and more all in one place.
+            <p class="text-gray-200 max-w-xl mb-6">
+                Shop the latest trends in fashion, electronics, and more.
             </p>
 
-
-            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <a href="./products.html" target="_parent"
-                    class="bg-[#0F172A] text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition">
+            <div class="flex gap-4 flex-col sm:flex-row">
+                <a href="./products.html" class="bg-[#0F172A] text-gray-200 px-6 py-3 rounded-xl">
                     Shop Now
                 </a>
 
-                <a href="./categories.html" target="_parent"
-                    class="bg-[#FFFFFF]/40 text-white border border-gray-300 px-6 py-3 rounded-xl hover:bg-gray-100 hover:text-black transition">
+                <a href="./categories.html"
+                    class="bg-white/40 border px-6 py-3 rounded-xl hover:bg-white hover:text-black">
                     Browse Categories
                 </a>
             </div>
         </div>
-
     </section>
 
-    <section class="py-12 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="text-center mb-10">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
-                    Shop by Category
-                </h2>
-                <a href="./categories.html" target="_parent" class="text-gray-500 mt-2 cursor-pointer hover:underline">
-                    Browse all categories
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
+    <section class="py-12">
+        <div class="max-w-6xl mx-auto px-4 text-center">
 
-            <div id="all-categories" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6  cursor-pointer">
+            <h2 class="text-2xl md:text-3xl font-bold mb-2">
+                Shop by Category
+            </h2>
 
-                <div class="relative rounded-xl overflow-hidden group"
-                    onclick="window.location.href = `/products.html?category=beauty`">
+            <a href="./categories.html" class="text-gray-500 hover:underline">
+                Browse all categories →
+            </a>
+
+            <div id="all-categories" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-10">
+
+                <div class="relative rounded-xl overflow-hidden group cursor-pointer"
+                    onclick="location.href='/products.html?category=beauty'">
+
                     <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348"
-                        class="w-full h-80 object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-black/30 flex flex-col justify-end p-4 text-white">
-                        <span class="text-sm opacity-80">Glow Essentials</span>
+                        class="h-80 w-full object-cover group-hover:scale-110 transition" />
+
+                    <div class="absolute inset-0 bg-black/40 flex flex-col justify-end p-4 text-white">
+                        <span class="text-sm">Glow Essentials</span>
                         <h3 class="text-lg font-bold">Beauty</h3>
-                        <span class="text-sm mt-1">See Products
-                            <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </div>
 
@@ -118,66 +146,50 @@
     </section>
 
     <section class="py-20 px-6 bg-gray-100">
-        <div id="quote"
-            class="max-w-3xl mx-auto bg-white/20 backdrop-blur-md border border-white/30 shadow-xl rounded-2xl p-10 text-center">
-
-            <!-- <div class="text-6xl text-gray-700">“</div>
-            <p class="text-xl md:text-2xl text-gray-800 font-light mt-4">
-                “Good design is good business. Shop smart, look better.”
-            </p>
-            <div class="mt-6 text-gray-600">
-                — Minimal Store
-            </div> -->
-
+        <div id="quote" class="max-w-3xl mx-auto rounded-2xl p-10 text-center backdrop-blur-md">
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-300 mt-10">
-        <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer class="bg-gray-900 text-gray-300">
+
+        <div class="max-w-7xl mx-auto px-6 py-10 grid md:grid-cols-4 gap-8">
+
             <div>
-                <h2 class="text-xl font-bold text-white mb-3">Mira Shop</h2>
+                <h2 class="text-white font-bold mb-2">Mira Shop</h2>
                 <p class="text-sm">
-                    Your one-stop shop for everything like beauty, furniture, groceries, and more.
+                    Your one-stop shop for everything.
                 </p>
             </div>
+
             <div>
-                <h3 class="text-white font-semibold mb-3">Support</h3>
+                <h3 class="text-white mb-2">Support</h3>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">Help Center</a></li>
-                    <li><a href="#" class="hover:text-white">Contact Us</a></li>
-                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-white">Terms & Conditions</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy</a></li>
                 </ul>
             </div>
 
-            <!-- Social -->
             <div>
-                <h3 class="text-white font-semibold mb-3">Follow Me</h3>
-                <div class="flex gap-4 text-sm">
-                    <a href="https://github.com/amira20nasser" target="_blank"
-                        class="flex items-center gap-2 hover:text-white">
+                <h3 class="text-white mb-2">Follow Me</h3>
+                <div class="flex gap-4">
+                    <a href="https://github.com/amira20nasser">
                         <i class="fa-brands fa-github"></i>
-                        GitHub
                     </a>
-
-                    <a href="https://linkedin.com/in/amira-nasser-sayed" target="_blank"
-                        class="flex items-center gap-2 hover:text-white">
+                    <a href="https://linkedin.com/in/amira-nasser-sayed">
                         <i class="fa-brands fa-linkedin"></i>
-                        LinkedIn
                     </a>
-
                 </div>
             </div>
-
         </div>
 
-        <!-- Bottom -->
-        <div class="border-t border-gray-700 text-center py-4 text-sm">
-            © 2026 Mira Ecommerce. All rights reserved.
+        <div class="text-center text-sm py-4 border-t border-gray-700">
+            © 2026 Mira Ecommerce
         </div>
     </footer>
 
     <script type="module" src="./index.js"></script>
+
 </body>
 
 </html>
