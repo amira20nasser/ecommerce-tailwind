@@ -89,7 +89,7 @@ run();
 const modal = document.getElementById("modal");
 const signButton = document.getElementById("sign-in");
 
-const emailInput = document.getElementById("email");
+const usernameInput = document.getElementById("username");
 const passwordInput = document.getElementById("password");
 const loginBtn = document.getElementById("login-btn");
 const form = document.getElementById("login-form");
@@ -114,34 +114,38 @@ window.closeModal = closeModal;
 
 
 
-let emailError = document.getElementById('email-error');
+let usernameError = document.getElementById('username-error');
 let passError = document.getElementById('password-error');
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+function isValidUsername(username) {
+    return username.length >= 2;
+}
+
 
 function isValidPassword(password) {
     return password.length >= 6;
 }
 
 function validateForm() {
-    const email = emailInput.value.trim();
+    const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
-    emailError.textContent = '';
+    usernameError.textContent = '';
     passError.textContent = '';
-    const isCorrectEmail = isValidEmail(email);
+    const isCorrectUsername = isValidUsername(username);
     const isCorrectPassword = isValidPassword(password);
-    const isValid = isValidEmail && isValidPassword;
-    if (!isCorrectEmail) {
-        emailError.innerHTML = "Please enter a valid e-mail.";
-        // console.log(emailError.textContent);
+    const isValidForm = isCorrectUsername && isValidPassword;
+    if (!isCorrectUsername) {
+        usernameError.innerHTML = "Please enter a valid e-mail.";
     }
     if (!isCorrectPassword) {
         passError.innerHTML = "Password must be at least 6 characters long."
     }
     loginBtn.disabled = !isValid;
 
-    if (isValid) {
+    if (isValidForm) {
         loginBtn.classList.remove("bg-gray-500", "cursor-not-allowed");
         loginBtn.classList.add("bg-[#152640]", "hover:bg-[#28487a]");
     } else {
@@ -150,12 +154,12 @@ function validateForm() {
     }
 }
 
-emailInput.addEventListener("input", validateForm);
+usernameInput.addEventListener("input", validateForm);
 passwordInput.addEventListener("input", validateForm);
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
-    console.log("Email:", emailInput.value);
+    console.log("Username:", usernameInput.value);
     console.log("Password:", passwordInput.value);
 
     //API CALL
