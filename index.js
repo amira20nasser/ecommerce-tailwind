@@ -2,7 +2,7 @@ import { fetchCategories } from "./api/fetch_categories.js";
 import { fetchQuote } from "./api/fetch_quote.js";
 import { login, refreshUserToken, getCurrentUser } from './api/auth.js'
 import { deleteCookie, getCookie, setCookie } from './cookies/cookie.js';
-
+import { getCart } from './cart.js'
 document.addEventListener("DOMContentLoaded", () => {
     checkIfUserLoggedIn();
     loadQuote();
@@ -170,14 +170,15 @@ async function submitLoginData(username, password) {
         setCookie("access-token", user.accessToken, 1 * 24 * 60 * 60 * 1000);
         setCookie("refresh-token", user.refreshToken, 7 * 24 * 60 * 60 * 1000);
     } catch (error) {
-        // Show pop up failed to log in 
+
         console.error("Login failed:", error);
+        alert("Failed to log in")
         isUserLogged = false;
     } finally {
         closeModal();
-        loginBtn.textContent = "Sign In";
-        loginBtn.classList.remove("bg-gray-500", "cursor-not-allowed");
-        loginBtn.classList.add("bg-[#152640]", "hover:bg-[#28487a]");
+        dom.loginBtn.textContent = "Sign In";
+        dom.loginBtn.classList.remove("bg-gray-500", "cursor-not-allowed");
+        dom.loginBtn.classList.add("bg-[#152640]", "hover:bg-[#28487a]");
     }
 }
 
@@ -215,3 +216,12 @@ async function checkIfUserLoggedIn() {
     return false;
 }
 
+
+function updateCartBadge() {
+    const cartCount = getCart().length;
+    const badge = document.getElementById('cart-count');
+    badge.textContent = cartCount;
+    badge.style.display = cartCount > 0 ? 'flex' : 'none';
+}
+
+updateCartBadge();

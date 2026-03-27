@@ -10,15 +10,17 @@ async function login(username, password) {
             password: password,
             expiresInMins: 60,
         });
-        let res = await fetch(
-            "https://dummyjson.com/auth/login",
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: body,
-                // credentials: 'include'
-            });
+        let res = await fetch("https://dummyjson.com/auth/login", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body,
+            // credentials: 'include'
+        });
+        if (!res.ok) {
+            throw new Error(`Login failed: ${res.status}`);
+        }
         let data = await res.json();
+
         return data;
     } catch (error) {
         console.error("Login: " + error);
@@ -34,8 +36,11 @@ async function refreshUserToken(refreshToken) {
             body: JSON.stringify({
                 refreshToken: refreshToken
             }),
-            credentials: 'include'
+            // credentials: 'include'
         });
+        if (!res.ok) {
+            throw new Error(`Login failed: ${res.status}`);
+        }
         let data = await res.json();
         return data;
     } catch (error) {
@@ -52,6 +57,9 @@ async function getCurrentUser(accessToken) {
                 'Authorization': `Bearer ${accessToken}`,
             },
         })
+        if (!res.ok) {
+            throw new Error(`Login failed: ${res.status}`);
+        }
         let data = await res.json();
         return data;
     } catch (error) {

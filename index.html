@@ -27,9 +27,15 @@
                 <input type="text" placeholder="Search"
                     class="hidden md:block bg-[#1c2a3f] px-4 py-2 rounded-lg text-sm outline-none w-56" />
 
-                <button onclick="window.location.href='./checkout.html'" class=" text-gray-300 hover:text-white">
+                <button onclick="window.location.href='./checkout.html'"
+                    class="relative text-gray-300 hover:text-white">
                     <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="cart-count"
+                        class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                        0
+                    </span>
                 </button>
+
 
                 <img id="profile-image" src="https://i.pravatar.cc/40"
                     class="hidden w-8 h-8 rounded-full border border-gray-400" />
