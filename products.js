@@ -1,8 +1,12 @@
 import { fetchProducts } from "./api/fetch_products.js";
 import { fetchCategories } from "./api/fetch_categories.js";
+import { toggleCart, isInCart, getCart } from "./cart.js";
+
 
 const container = document.getElementById("products-container");
 const categoriesList = document.getElementById("categories-list");
+const cartCount = document.getElementById("cart-count");
+const cartBtn = document.getElementById("cart-btn");
 
 let selectedCategories = new Set();
 
@@ -10,6 +14,17 @@ const categoryURL = new URLSearchParams(window.location.search).get("category");
 if (categoryURL) {
     selectedCategories.add(categoryURL);
 }
+function updateCartCount() {
+    const cartLength = getCart().length;
+    const isEmpty = cartLength === 0;
+
+    cartBtn.classList.toggle("bg-[#333]", isEmpty);
+    cartBtn.classList.toggle("cursor-not-allowed", isEmpty);
+    cartBtn.classList.toggle("cursor-pointer", !isEmpty);
+
+    cartCount.textContent = cartLength;
+}
+document.addEventListener("DOMContentLoaded", updateCartCount);
 
 function showLoading() {
     container.innerHTML = `<p class="text-gray-500">Loading Products...</p>`;
@@ -40,8 +55,8 @@ function showProducts(products) {
                 ${product.title}
                 </h3>
 
-                <p class="text-gray-500 text-sm mb-2">
-                    ${product.description.slice(0, 50)}...
+                   <p class="text-gray-500 text-sm mb-2">
+                         ${product.description.slice(0, 50)}...
                     </p>
 
                     <div class="flex justify-between items-center">
@@ -49,14 +64,28 @@ function showProducts(products) {
                     $${product.price}
                     </span>
                     
-                    <button class="bg-[#1c2a3f] text-white px-3 py-1 rounded-lg hover:bg-blue-900">
-                        Add
+                    <button 
+                    data-id="${product.id}" 
+                    class="cart-btn bg-[#1c2a3f] text-white px-3 py-1 rounded-lg hover:bg-blue-900">
+                          ${isInCart(product.id) ? "Remove" : "Add"}
                         </button>
-                        </div>
-            </div>
-            `;
+                    </div>
+            </div>`;
+
     });
     container.innerHTML = html;
+
+    document.querySelectorAll(".cart-btn").forEach(button => {
+        button.addEventListener("click", () => {
+            console.log(button.dataset);
+
+            const productId = Number(button.dataset.id);
+            const product = products.find(p => p.id === productId);
+            toggleCart(product);
+            button.textContent = isInCart(productId) ? "Remove" : "Add";
+            updateCartCount();
+        });
+    });
     // console.log(container.innerHTML);
 
 }

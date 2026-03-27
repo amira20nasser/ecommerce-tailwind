@@ -5,10 +5,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     <title>Products Page</title>
 </head>
 
 <body class="bg-gray-100">
+
+    <button id="cart-btn"
+        class="fixed bottom-6 right-6 bg-[#1c2a3f] text-white px-5 py-3 rounded-lg  shadow-lg transition flex items-center gap-2">
+        <i class="fas fa-shopping-cart"></i>
+        <div id="cart-count" class="text-red-400">
+        </div>
+    </button>
     <header class="bg-white shadow p-4 flex justify-between items-center">
         <h1 class="text-lg md:text-xl font-semibold text-[#1c2a3f]">
             Mira E-commerce
